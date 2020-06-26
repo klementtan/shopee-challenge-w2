@@ -62,7 +62,6 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                  verbose=1)
 model.fit(
     train_data_gen,
-    steps_per_epoch=105392 // batch_size,
     epochs=epochs,
     callbacks=[cp_callback]
 )
