@@ -5,7 +5,7 @@ import os
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
+import pdb
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,6 +15,15 @@ batch_size = 128
 epochs = 100
 IMG_HEIGHT = 512
 IMG_WIDTH = 512
+total_train = 0
+
+for base, dirs, files in os.walk(TRAIN_DATA_PATH):
+    for Files in files:
+        if (Files[0] != ".") and (len(Files) < 36):
+          pdb.set_trace()
+        total_train += 1
+
+print(f"Total train {total_train}")
 
 def preprocess_generator():
   train_image_generator = ImageDataGenerator(rescale=1./255) # Generator for our training data
@@ -33,7 +42,6 @@ def plotImages(images_arr):
     plt.show()
 
 train_data_gen = preprocess_generator()
-pdb.set_trace()
 
 sample_training_images, _ = next(train_data_gen)
 
@@ -60,8 +68,8 @@ checkpoint_dir = os.path.dirname(checkpoint_path)
 cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
                                                  save_weights_only=True,
                                                  verbose=1)
-model.fit(
+model.fit_generator(
     train_data_gen,
+    steps_per_epoch=total_train // batch_size,
     epochs=epochs,
-    callbacks=[cp_callback]
 )
